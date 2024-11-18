@@ -7,7 +7,7 @@ const initialState = {
     error: null,
 };
 
-// Export the async thunk
+// Async Thunks
 export const addData = createAsyncThunk('data/addData', async (data, { rejectWithValue }) => {
     try {
         const res = await axiosInstance.post('/.json', data);
@@ -22,30 +22,30 @@ export const fetchData = createAsyncThunk('data/fetchData', async (_, { rejectWi
         const res = await axiosInstance.get('/.json')
         return Object.keys(res.data).map(id => {
             return { id: id, ...res.data[id] }
-        })
+        });
     } catch (error) {
         return rejectWithValue(error.data.message);
     }
-})
+});
 
 export const deleteData = createAsyncThunk('data/deleteData', async (id, { rejectWithValue }) => {
     try {
         const res = await axiosInstance.delete(`/${id}.json`);
         return id;
     } catch (error) {
-        return rejectWithValue(error.data.message)
+        return rejectWithValue(error.data.message);
     }
-})
+});
 
-export const editData = createAsyncThunk('data/editData', async ({id, updateData}, { rejectWithValue }) => {
+export const editData = createAsyncThunk('data/editData', async ({ id, updateData }, { dispatch, rejectWithValue }) => {
     try {
-        const res = await axiosInstance.patch(`/${id}.json`, updateData)
-        // console.log(res.data);
-        return {id, ...updateData};
+        await axiosInstance.patch(`/${id}.json`, updateData); // Edit the data in the backend
+        dispatch(fetchData()); // Re-fetch the updated data after the edit
+        return { id, ...updateData }; // Return the updated data
     } catch (error) {
         return rejectWithValue(error.data.message);
     }
-})
+});
 
 export const formSlice = createSlice({
     name: "form",
@@ -90,17 +90,13 @@ export const formSlice = createSlice({
             })
             .addCase(editData.fulfilled, (state, action) => {
                 state.loading = false;
-                const index = state.data.findIndex(item => item.id === action.payload.id);
-                if(index !== -1) {
-                    state.data[index] = {...state.data[index],...action.payload.updateData};
-                }
+                // State is updated via fetchData to ensure fresh data is reloaded
             })
             .addCase(editData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            })
-    }
+            });
+    },
 });
 
-// Export the reducer
 export default formSlice.reducer;

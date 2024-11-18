@@ -8,7 +8,6 @@ const Form = () => {
         dispatch(fetchData());
     }, [])
 
-
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { id } = useParams();
@@ -16,7 +15,6 @@ const Form = () => {
     const data = useSelector((state) => state.form.data);
 
     const fetchEditData = data.find((data) => data.id === id);
-    // console.log(fetchEditData);
 
     useEffect(() => {
         if (fetchEditData) {
@@ -33,7 +31,6 @@ const Form = () => {
         email: '',
         password: '',
     });
-
 
     // Handle input changes
     const handleChange = (e) => {
@@ -53,11 +50,9 @@ const Form = () => {
         }
     };
 
-
-
     return (
-        <div className="container mt-5">
-            <h2 className="mb-4">User Registration Form</h2>
+        <div className="container mt-5 bg-dark text-light p-5 rounded">
+            <h2 className="mb-4 text-center">{fetchEditData ? 'Edit' : 'User'} Registration Form</h2>
             <form onSubmit={handleSubmit}>
                 {/* Name Field */}
                 <div className="mb-3">
@@ -66,13 +61,12 @@ const Form = () => {
                     </label>
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control bg-secondary text-light"
                         id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your name"
-
                     />
                 </div>
 
@@ -83,7 +77,7 @@ const Form = () => {
                     </label>
                     <input
                         type="email"
-                        className="form-control"
+                        className="form-control bg-secondary text-light"
                         id="email"
                         name="email"
                         value={formData.email}
@@ -99,7 +93,7 @@ const Form = () => {
                     </label>
                     <input
                         type={fetchEditData ? "text" : "password"}
-                        className="form-control"
+                        className="form-control bg-secondary text-light"
                         id="password"
                         name="password"
                         value={formData.password}
@@ -110,13 +104,13 @@ const Form = () => {
 
                 {/* Submit Button */}
                 <div className="d-flex justify-content-evenly">
-
                     <button type="submit" className="btn btn-primary">
                         {fetchEditData ? "Edit Data" : "Submit"}
                     </button>
-                    <Link to='/show' ><button type="button" className="btn btn-primary">
-                        Show
-                    </button>
+                    <Link to='/show'>
+                        <button type="button" className="btn btn-primary">
+                            Show
+                        </button>
                     </Link>
                 </div>
             </form>
@@ -124,6 +118,4 @@ const Form = () => {
     );
 };
 
-
-
-export default Form
+export default Form;
